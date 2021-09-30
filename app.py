@@ -38,5 +38,14 @@ def tenorimages():
     
     return jsonify(result)
 
+
+@app.route("/addonetocanvas/", methods = ["POST","GET"])
+@cross_origin(origin='*')
+def addonetocanvas():
+    if request.method == 'POST':
+        query = request.json["image"]
+        print(query)
+        return jsonify("Success")
+
 if __name__ == '__main__':
     app.run()
