@@ -13,6 +13,7 @@ CORS(app, support_credentials=True)
 @cross_origin(origin='*')
 def tenorimages():
     result = {}
+    result["tenor"] = [] 
     if request.method == 'POST':
         apikey = "FMSOZTYHFB4D"  # test value
         lmt = request.json["lmt"]
@@ -31,6 +32,7 @@ def tenorimages():
             top_8gifs = json.loads(r.content)
             for i in range(len(top_8gifs['results'])):
                 url = top_8gifs['results'][i]['media'][0]['gif']['url']
+                result["tenor"].append(url)
         else:
             top_8gifs = None
     
