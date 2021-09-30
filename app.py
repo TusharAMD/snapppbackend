@@ -44,8 +44,12 @@ def tenorimages():
 def addonetocanvas():
     if request.method == 'POST':
         query = request.json["image"]
-        print(query)
+        client = pymongo.MongoClient("mongodb+srv://admin:admin@cluster0.wonbr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+        db = client['Snappp']
+        collection = db["AddOneToCanvas"]
+        collection.insert_one(query)
         return jsonify({"status":"Success"})
+        
     
     return jsonify({"status":"200"})
 if __name__ == '__main__':
