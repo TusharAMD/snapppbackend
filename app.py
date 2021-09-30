@@ -45,7 +45,8 @@ def addonetocanvas():
     if request.method == 'POST':
         query = request.json["image"]
         print(query)
-        return jsonify("Success")
-
+        return jsonify("status":"Success")
+    
+    return jsonify("status":"200")
 if __name__ == '__main__':
     app.run()
