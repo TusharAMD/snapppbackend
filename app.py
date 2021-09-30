@@ -43,15 +43,25 @@ def tenorimages():
 @app.route("/addonetocanvas/", methods = ["POST","GET"])
 @cross_origin(origin='*')
 def addonetocanvas():
+
+    client = pymongo.MongoClient("mongodb+srv://admin:admin@cluster0.wonbr.mongodb.net/Snappp?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE")
+    db = client['Snappp']
+    collection = db["AddOneToCanvas"]
     if request.method == 'POST':
-        query = request.json["image"]
-        client = pymongo.MongoClient("mongodb+srv://admin:admin@cluster0.wonbr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
-        db = client['Snappp']
-        collection = db["AddOneToCanvas"]
-        collection.insert_one(query)
+        query = request.json
+        x = collection.find_one()
+        prevUrl = x["image"]
+        myquery = { "image": prevUrl }
+        newvalues = { "$set": { "image": query["image"] } }
+        
+        collection.update_one(myquery,newvalues)
         return jsonify({"status":"Success"})
         
+    if request.method == 'GET':
+        x = collection.find_one()
+        img = x["image"]
+        return jsonify({"image":img})
     
     return jsonify({"status":"200"})
 if __name__ == '__main__':
-    app.run()
+    app.run(debug = True)
