@@ -7,10 +7,11 @@ from flask_cors import CORS, cross_origin
 import pymongo
 import base64
 
+# To avoid any CORS Issue
 CORS(app, support_credentials=True)
 
 
-
+# This is api endpoint to get tenor images from tenor api and on POST request send images to frontend
 @app.route("/api/", methods = ["POST","GET"])
 @cross_origin(origin='*')
 def tenorimages():
@@ -18,7 +19,7 @@ def tenorimages():
     imgbb = []
     result["tenor"] = [] 
     if request.method == 'POST':
-        apikey = "FMSOZTYHFB4D"  # test value
+        apikey = "FMSOZTYHFB4D"  # key value
         lmt = request.json["lmt"]
         r = requests.get("https://api.tenor.com/v1/anonid?key=%s" % apikey)
 
@@ -57,7 +58,7 @@ def tenorimages():
     
     return jsonify(result)
 
-
+# This is used to get image from tool box and send to Canvas
 @app.route("/addonetocanvas/", methods = ["POST","GET"])
 @cross_origin(origin='*')
 def addonetocanvas():
@@ -88,6 +89,7 @@ def addonetocanvas():
     
     return jsonify({"status":"200"})
 
+# When post request is performed on this endpoint we would get snap image from that specific user (user detail is send from frontend)
 @app.route("/getpwa/", methods = ["POST","GET"])
 @cross_origin(origin='*')
 def getpwa():
@@ -105,7 +107,8 @@ def getpwa():
         return jsonify({"image":img})
 
     return jsonify({"status":"200"})
-    
+  
+# When Save button is pressed a axios request is made and SVG data is send to backend. Now here we save the data to the mongodb database according to email id we got from frontend    
 @app.route("/html2canvas/", methods = ["POST","GET"])
 @cross_origin(origin='*')
 def html2canvas():
@@ -123,21 +126,10 @@ def html2canvas():
        user=request.json["user"]
        
        collection.insert_one({"user":user,"data":data,"upvotedby":[user]})
-       
-       '''
-       with open("meme.svg", "rb") as file:
-            url = "https://api.imgbb.com/1/upload"
-            payload = {
-                "key": "c4b63af118f97f88cdeea980cdb4d6c9",
-                "image": base64.b64encode(file.read()),
-            }
-            res = requests.post(url, payload)
-            img = res.json()["data"]["url"]
-            result["tenor"].append(img)
-        '''
     return jsonify({"status":"200"})
     
-    
+
+# This endpoint serves the purpose to give information of memes collection made by the particular user
 @app.route("/profile/", methods = ["POST","GET"])
 @cross_origin(origin='*')
 def profile():
@@ -166,6 +158,7 @@ def profile():
            return jsonify({"upvotedby":result})
     return jsonify({"status":"200"})
 
+# When upvote is done the user who has upvoted must be send to database and to avoid mutiple upvotes we are using sets in python
 @app.route("/voting/", methods = ["POST","GET"])
 @cross_origin(origin='*')
 def voting():
